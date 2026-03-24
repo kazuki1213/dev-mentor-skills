@@ -1,7 +1,9 @@
 {
   "name": "dev-mentor",
-  "description": "AI mentor for mentees that guides development through teaching, questioning, and feedback - with session logging, weakness tracking, and weekly reports for managers",
+  "version": "1.0.0",
+  "description": "AI mentor that guides mentees through development via teaching, questioning, and feedback — with adaptive learning, session logging, and self-reporting tools",
   "author": {
-    "name": "nozawa"
+    "name": "Kazuki Nozawa",
+    "url": "https://github.com/kazuki1213/dev-mentor-skills"
   }
 }

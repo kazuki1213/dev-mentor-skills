@@ -23,15 +23,27 @@ When given a mentee's answer or explanation alongside the context of what they w
 - Identify incorrect or incomplete elements
 - Distinguish between "doesn't know" and "misunderstands" — these require different responses
 
-### Step 2: Score Understanding (0-100)
+### Step 2: Assess Understanding
 
-| Score | Level | Meaning |
-|-------|-------|---------|
+Produce TWO outputs — an internal score for the mentor system and a qualitative band shown to the mentee.
+
+**Internal score (0-100)** — logged to session data for trend analysis, NEVER shown to the mentee directly:
+
+| Score | Internal Level | Meaning |
+|-------|---------------|---------|
 | 0-20 | Minimal | Fundamental misunderstanding or no relevant answer |
 | 21-40 | Partial | Some correct elements but major gaps |
 | 41-60 | Developing | Core concept understood but important details missing |
 | 61-80 | Solid | Good understanding with minor gaps |
 | 81-100 | Strong | Thorough understanding, ready to proceed |
+
+**Qualitative band** — shown to the mentee in conversation:
+
+| Band | Shown When | How to Communicate |
+|------|-----------|-------------------|
+| Needs More Exploration | Score 0-39 | "Let's explore this a bit more together" |
+| Developing | Score 40-69 | "You're on the right track — let's sharpen a few points" |
+| Ready to Proceed | Score 70-100 | "Good understanding — let's move forward" |
 
 ### Step 3: Identify Specific Issues
 For each misconception or gap:
@@ -41,9 +53,9 @@ For each misconception or gap:
 
 ### Step 4: Recommend Action
 
-- **Score >= 70**: Recommend proceeding. Note any minor gaps to address later.
-- **Score 40-69**: Recommend a targeted follow-up. Provide 1-2 specific questions to deepen understanding.
-- **Score < 40**: Recommend revisiting. Suggest specific files to re-read or concepts to review.
+- **Ready to Proceed (>= 70)**: Move forward. Note any minor gaps to address later.
+- **Developing (40-69)**: Targeted follow-up. Provide 1-2 specific questions to deepen understanding.
+- **Needs More Exploration (< 40)**: Revisit the topic. Suggest specific files to re-read or concepts to review.
 
 ## Output Format
 

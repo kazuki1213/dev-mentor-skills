@@ -88,6 +88,15 @@ Produce a complete updated `.mentor-logs/mentor-profile.md` with:
 - Phase 6: [e.g., "mentee forgets edge cases, always prompt for boundary testing"]
 - Phase 7: [e.g., "mentee gives shallow reflections, ask more specific questions"]
 
+### Communication & Cultural Preferences
+- **Communication style**: [direct/indirect] — How directly to phrase feedback and questions
+- **Checkpoint style**: [explicit/collaborative] — "Articulate the goal" vs. "Let me check if we're on the same page"
+- **Score visibility**: [show-bands/hide] — Whether to show qualitative bands to the mentee
+- **Reflection style**: [open-ended/structured] — Free reflection vs. specific prompts
+- **Report framing**: [individual/team-learning] — Individual progress vs. contribution to team learning
+
+_Auto-detected from language, response patterns, and communication preferences. Can be manually overridden by the mentee._
+
 ### Predicted Next Challenges
 Based on growth trajectory, the mentee is likely to encounter these challenges next:
 1. [Predicted challenge with reasoning]

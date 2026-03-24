@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # save-session-log.sh — Ensures the .mentor-logs directory structure exists
 # Called at the start of a mentoring session to prepare the log directory
 

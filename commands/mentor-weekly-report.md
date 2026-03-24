@@ -1,79 +1,84 @@
 ---
-description: Generate a weekly mentoring report for submission to a manager or team lead
+description: Co-create a weekly learning report with the mentee — the mentee drives the narrative, the AI provides supporting data
 argument-hint: [start-date YYYY-MM-DD]
-allowed-tools: [Read, Glob, Grep, Bash, Write, Agent, TodoWrite]
+allowed-tools: [Read, Write, Glob, Grep, Bash, Agent, TodoWrite]
 ---
 
-# Weekly Mentoring Report Generator
+# Weekly Learning Report — Co-creation
 
-Generate a structured weekly report suitable for submission to a manager or team lead. Respond in the same language the user uses.
+Help the mentee write their own weekly learning report. The AI provides data and suggestions; the mentee owns the narrative. Respond in the same language the user uses.
+
+## Philosophy
+
+This is **the mentee's report about their own learning**, not the AI's report about the mentee. The AI helps by surfacing data from session logs, but the mentee writes the key sections in their own voice. Detailed scores and stumbling points stay private — only qualitative growth indicators appear in the shared report.
 
 ## Arguments
 
 $ARGUMENTS
 
-- No argument: Generate report for the most recent 7 days
-- `<start-date>`: Generate report for 7 days starting from the specified date (YYYY-MM-DD format)
+- No argument: Report for the most recent 7 days
+- `<start-date>`: Report for 7 days from the specified date (YYYY-MM-DD)
 
 ## Process
 
-### Step 1: Gather Data
+### Step 1: Gather Data (AI)
 
-1. Determine the report period (start date to start date + 7 days)
-2. Read all session logs from `.mentor-logs/sessions/` within the date range
-3. Read `.mentor-logs/weaknesses.md` for weakness tracking data
-4. Read `.mentor-logs/growth-summary.md` for trend data
-5. If available, read the previous week's report from `.mentor-logs/reports/` for comparison
+1. Determine the report period
+2. Read session logs from `.mentor-logs/sessions/` within the date range
+3. Read `.mentor-logs/weaknesses.md` and `.mentor-logs/growth-summary.md`
+4. Read the previous week's report from `.mentor-logs/reports/` if available
+5. Launch a `growth-analyzer` agent to analyze trends (limit to most recent 20 sessions max)
 
-### Step 2: Analyze
+### Step 2: Prompt the Mentee
 
-1. Launch a `growth-analyzer` agent with all relevant session logs
-2. Calculate:
-   - Average understanding score for the week
-   - Number of sessions completed
-   - Most practiced skill categories
-   - Improvement vs. previous week (if data available)
-   - Persistent weaknesses
-   - New skills or patterns learned
+Ask the mentee to reflect on their week. Present a summary of sessions to jog their memory, then ask:
 
-### Step 3: Generate Report
+1. "What did you learn this week that you're most proud of?"
+2. "What was your biggest challenge, and how did you work through it?"
+3. "What do you want to focus on next week?"
+4. "Is there any support you'd like from your team lead or manager?"
 
-Read the template from `templates/weekly-report.md` and fill in all fields. Replace template placeholders with actual data.
+Wait for the mentee's answers before proceeding.
 
-Key sections to generate:
-- **Sessions This Week**: Table of all sessions with dates, tasks, scores, and key learnings
-- **Learning Outcomes**: Narrative summary of skills acquired or reinforced
-- **Growth Points**: Comparison with previous week, metric changes
-- **Challenges & Weaknesses**: Recurring issues table and specific challenges narrative
-- **Goals for Next Week**: Based on weakness analysis, recommend focus areas
-- **Mentor Assessment**: AI mentor's evaluation of technical skills, problem-solving, and process adherence
+### Step 3: Draft Report Together
 
-### Step 4: Save Report
+Read the template from `templates/weekly-report.md` and fill in:
 
-1. Save the completed report to `.mentor-logs/reports/weekly-<start-date>.md`
-2. Create the `.mentor-logs/reports/` directory if it doesn't exist
-3. Display the report to the user
+- **Sections 1-6**: Use the mentee's own words from Step 2. Organize and lightly edit for clarity, but preserve their voice. Do NOT replace their narrative with AI-generated text.
+- **Section 7 (AI-assisted summary)**: The AI fills in growth trends and suggested next steps based on session data. Use qualitative indicators only:
+  - Independence: Guided / Developing / Independent
+  - Self-review: Building / Developing / Strong
+  - Trend: Improving / Steady / Needs attention
+  - **Never include numerical scores (0-100) in the report.** Scores are internal data for the mentor system only.
 
-### Step 5: Confirm
+### Step 4: Review with Mentee
 
-Tell the user:
-- Where the report was saved
-- That they can review and edit before sharing
-- How to view past reports: `/mentor-review growth`
+Show the draft to the mentee and ask:
+- "Does this accurately represent your week?"
+- "Is there anything you'd like to change or add before saving?"
 
-## If Insufficient Data
+Make any requested changes.
 
-If fewer than 1 session exists in the date range:
-- Inform the user that there isn't enough data for a meaningful report
-- Suggest completing more mentoring sessions first
-- If at least 1 session exists, generate a partial report with available data and note the limited scope
+### Step 5: Save Report
 
-## Report Quality Guidelines
+1. Save to `.mentor-logs/reports/weekly-<start-date>.md`
+2. Create the directory if it doesn't exist
+3. Tell the mentee:
+   - Where the report was saved
+   - That it is **not committed to git** (`.mentor-logs/` is gitignored)
+   - They can share it with their manager by copying the file or pasting the content
+   - They have full control over what gets shared
 
-- **Factual and data-driven**: Every claim backed by session data
-- **Balanced**: Show both strengths and areas for improvement
-- **Actionable**: Goals and recommendations are specific and measurable
-- **Professional tone**: Suitable for sharing with management
-- **Concise**: The report should be scannable — use tables and bullet points over long paragraphs
+## If No Sessions Exist
+
+If no sessions exist in the date range, inform the mentee and suggest starting a session with `/dev-mentor`.
+
+## Report Principles
+
+- **Mentee-owned**: The mentee's voice comes first; AI data supports it
+- **Privacy-first**: No raw scores, no stumbling-point details, no "Self-identified?" tracking in the shared report
+- **Growth-oriented**: Focus on progress and next steps, not deficiencies
+- **Actionable**: Goals are specific; support requests are explicit
+- **Honest**: Do not inflate progress — but frame challenges constructively
 
 ---
