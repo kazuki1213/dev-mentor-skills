@@ -105,61 +105,71 @@ Reports are saved to `.mentor-logs/reports/` in a format ready for manager revie
 
 ## Architecture
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                        /dev-mentor                              │
-│                   Main Mentoring Workflow                        │
-│                                                                 │
-│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐       │
-│  │ Phase 1  │→ │ Phase 2  │→ │ Phase 3  │→ │ Phase 4  │→ ...  │
-│  │Understand│  │ Explore  │  │ Design   │  │Implement │       │
-│  └──────────┘  └────┬─────┘  └──────────┘  └──────────┘       │
-│                     │                                           │
-│         ┌───────────┴───────────┐                               │
-│         ▼                       ▼                               │
-│  ┌──────────────┐  ┌───────────────────┐                       │
-│  │codebase-guide│  │understanding-     │  ← Specialized        │
-│  │   (agent)    │  │checker (agent)    │    Agents              │
-│  └──────────────┘  └───────────────────┘                       │
-│                                                                 │
-│  ... → ┌──────────┐  ┌──────────┐  ┌──────────┐               │
-│        │ Phase 5  │→ │ Phase 6  │→ │ Phase 7  │               │
-│        │ Review   │  │  Test    │  │ Reflect  │               │
-│        └────┬─────┘  └──────────┘  └───┬──────┘               │
-│             │                          │                        │
-│             ▼                          ▼                        │
-│      ┌─────────────┐          ┌──────────────┐                 │
-│      │code-feedback│          │mentor-evolve │ ← Meta-learning │
-│      │  (agent)    │          │  (agent)     │                 │
-│      └─────────────┘          └──────┬───────┘                 │
-│                                      │                          │
-└──────────────────────────────────────┼──────────────────────────┘
-                                       │
-                    ┌──────────────────┐│┌──────────────────────┐
-                    │  .mentor-logs/   │▼│                      │
-                    │                  │ │  mentor-profile.md   │
-                    │  sessions/*.md ──┼─│  (evolves over time) │
-                    │  weaknesses.md   │ │                      │
-                    │  growth-summary  │ │  ┌────────────────┐  │
-                    │  reports/*.md    │ │  │ Topic Mastery   │  │
-                    │                  │ │  │ Learning Style  │  │
-                    └──────────────────┘ │  │ Strategy Memory │  │
-                                         │  │ Phase Customs   │  │
-                           ▲             │  └────────────────┘  │
-                           │             └──────────────────────┘
-                           │                        │
-                    ┌──────┴───────┐                │
-                    │/mentor-review│    Loaded at ◄──┘
-                    │/mentor-weekly│    session start
-                    │   -report   │
-                    └──────────────┘
+```mermaid
+flowchart TB
+    subgraph workflow["/dev-mentor — Mentoring Workflow"]
+        P1["Phase 1<br/>Understand"] --> P2["Phase 2<br/>Explore"]
+        P2 --> P3["Phase 3<br/>Design"]
+        P3 --> P4["Phase 4<br/>Implement"]
+        P4 --> P5["Phase 5<br/>Review"]
+        P5 --> P6["Phase 6<br/>Test"]
+        P6 --> P7["Phase 7<br/>Reflect"]
+    end
 
-  ┌─────────────────────────────────────────────────────────────┐
-  │  Auto-triggered Skills (no slash command needed)            │
-  │                                                             │
-  │  "review my code" → dev-mentor-review                      │
-  │  "why / なぜ"     → dev-mentor-explain                     │
-  └─────────────────────────────────────────────────────────────┘
+    subgraph agents["Specialized Agents"]
+        A1["🔵 codebase-guide<br/>Teaching material"]
+        A2["🟡 understanding-checker<br/>Comprehension scoring"]
+        A3["🟢 code-feedback<br/>Educational review"]
+        A4["🟣 growth-analyzer<br/>Weakness patterns"]
+        A5["🔷 mentor-evolve<br/>Meta-learning"]
+    end
+
+    subgraph logs[".mentor-logs/"]
+        S["sessions/*.md"]
+        W["weaknesses.md"]
+        G["growth-summary.md"]
+        R["reports/*.md"]
+    end
+
+    subgraph profile["mentor-profile.md"]
+        MP1["Topic Mastery Map"]
+        MP2["Learning Style"]
+        MP3["Strategy Memory"]
+        MP4["Phase Adjustments"]
+    end
+
+    P2 --> A1
+    P2 --> A2
+    P5 --> A3
+    P7 --> A5
+
+    A5 -->|"analyze & evolve"| profile
+    P7 -->|"save"| S
+    A4 --> W
+    A4 --> G
+
+    profile -->|"loaded at<br/>session start"| P1
+
+    subgraph review["Review Commands"]
+        MR["/mentor-review"]
+        MW["/mentor-weekly-report"]
+    end
+
+    MR --> logs
+    MW --> logs
+    MW --> A4
+
+    subgraph skills["Auto-triggered Skills"]
+        SK1["dev-mentor-review<br/>'review my code'"]
+        SK2["dev-mentor-explain<br/>'why / なぜ'"]
+    end
+
+    style workflow fill:#1a1a2e,stroke:#16213e,color:#e0e0e0
+    style agents fill:#0f3460,stroke:#16213e,color:#e0e0e0
+    style logs fill:#533483,stroke:#16213e,color:#e0e0e0
+    style profile fill:#e94560,stroke:#16213e,color:#fff
+    style review fill:#1a1a2e,stroke:#16213e,color:#e0e0e0
+    style skills fill:#1a1a2e,stroke:#16213e,color:#e0e0e0
 ```
 
 ### Agents

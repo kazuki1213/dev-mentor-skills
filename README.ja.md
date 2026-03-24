@@ -105,61 +105,71 @@ cp dev-mentor-skills/AGENTS.md ~/.codex/AGENTS.md
 
 ## アーキテクチャ
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                        /dev-mentor                              │
-│                  メインメンタリングワークフロー                      │
-│                                                                 │
-│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐       │
-│  │Phase 1   │→ │Phase 2   │→ │Phase 3   │→ │Phase 4   │→ ...  │
-│  │タスク理解 │  │コード探索 │  │設計議論   │  │実装ガイド │       │
-│  └──────────┘  └────┬─────┘  └──────────┘  └──────────┘       │
-│                     │                                           │
-│         ┌───────────┴───────────┐                               │
-│         ▼                       ▼                               │
-│  ┌──────────────┐  ┌───────────────────┐                       │
-│  │codebase-guide│  │understanding-     │  ← 専門エージェント    │
-│  │  (教材作成)   │  │checker (理解度評価)│                       │
-│  └──────────────┘  └───────────────────┘                       │
-│                                                                 │
-│  ... → ┌──────────┐  ┌──────────┐  ┌──────────┐               │
-│        │Phase 5   │→ │Phase 6   │→ │Phase 7   │               │
-│        │レビュー   │  │テスト     │  │振り返り   │               │
-│        └────┬─────┘  └──────────┘  └───┬──────┘               │
-│             │                          │                        │
-│             ▼                          ▼                        │
-│      ┌─────────────┐          ┌──────────────┐                 │
-│      │code-feedback│          │mentor-evolve │ ← メタ学習       │
-│      │(教育的レビュー)│          │(メンター進化) │                 │
-│      └─────────────┘          └──────┬───────┘                 │
-│                                      │                          │
-└──────────────────────────────────────┼──────────────────────────┘
-                                       │
-                    ┌──────────────────┐│┌──────────────────────┐
-                    │  .mentor-logs/   │▼│                      │
-                    │                  │ │  mentor-profile.md   │
-                    │  sessions/*.md ──┼─│  (使うほど進化)       │
-                    │  weaknesses.md   │ │                      │
-                    │  growth-summary  │ │  ┌────────────────┐  │
-                    │  reports/*.md    │ │  │ トピック習熟度   │  │
-                    │                  │ │  │ 学習スタイル     │  │
-                    └──────────────────┘ │  │ 戦略メモリ      │  │
-                                         │  │ フェーズ調整     │  │
-                           ▲             │  └────────────────┘  │
-                           │             └──────────────────────┘
-                           │                        │
-                    ┌──────┴───────┐                │
-                    │/mentor-review│  セッション開始時 ◄──┘
-                    │/mentor-weekly│  に自動読み込み
-                    │   -report   │
-                    └──────────────┘
+```mermaid
+flowchart TB
+    subgraph workflow["/dev-mentor — メンタリングワークフロー"]
+        P1["Phase 1<br/>タスク理解"] --> P2["Phase 2<br/>コード探索"]
+        P2 --> P3["Phase 3<br/>設計議論"]
+        P3 --> P4["Phase 4<br/>実装ガイド"]
+        P4 --> P5["Phase 5<br/>レビュー"]
+        P5 --> P6["Phase 6<br/>テスト"]
+        P6 --> P7["Phase 7<br/>振り返り"]
+    end
 
-  ┌─────────────────────────────────────────────────────────────┐
-  │  自動起動スキル（スラッシュコマンド不要）                        │
-  │                                                             │
-  │  「レビューして」  → dev-mentor-review                       │
-  │  「なぜ / why」   → dev-mentor-explain                      │
-  └─────────────────────────────────────────────────────────────┘
+    subgraph agents["専門エージェント"]
+        A1["🔵 codebase-guide<br/>教材作成"]
+        A2["🟡 understanding-checker<br/>理解度評価"]
+        A3["🟢 code-feedback<br/>教育的レビュー"]
+        A4["🟣 growth-analyzer<br/>弱点分析"]
+        A5["🔷 mentor-evolve<br/>メタ学習"]
+    end
+
+    subgraph logs[".mentor-logs/"]
+        S["sessions/*.md"]
+        W["weaknesses.md"]
+        G["growth-summary.md"]
+        R["reports/*.md"]
+    end
+
+    subgraph profile["mentor-profile.md"]
+        MP1["トピック習熟度マップ"]
+        MP2["学習スタイル"]
+        MP3["戦略メモリ"]
+        MP4["フェーズ別調整"]
+    end
+
+    P2 --> A1
+    P2 --> A2
+    P5 --> A3
+    P7 --> A5
+
+    A5 -->|"分析・進化"| profile
+    P7 -->|"保存"| S
+    A4 --> W
+    A4 --> G
+
+    profile -->|"セッション開始時<br/>に自動読み込み"| P1
+
+    subgraph review["振り返りコマンド"]
+        MR["/mentor-review"]
+        MW["/mentor-weekly-report"]
+    end
+
+    MR --> logs
+    MW --> logs
+    MW --> A4
+
+    subgraph skills["自動起動スキル"]
+        SK1["dev-mentor-review<br/>「レビューして」"]
+        SK2["dev-mentor-explain<br/>「なぜ / why」"]
+    end
+
+    style workflow fill:#1a1a2e,stroke:#16213e,color:#e0e0e0
+    style agents fill:#0f3460,stroke:#16213e,color:#e0e0e0
+    style logs fill:#533483,stroke:#16213e,color:#e0e0e0
+    style profile fill:#e94560,stroke:#16213e,color:#fff
+    style review fill:#1a1a2e,stroke:#16213e,color:#e0e0e0
+    style skills fill:#1a1a2e,stroke:#16213e,color:#e0e0e0
 ```
 
 ### エージェント
