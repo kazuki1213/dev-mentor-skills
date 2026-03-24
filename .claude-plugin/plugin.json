@@ -1,0 +1,7 @@
+{
+  "name": "dev-mentor",
+  "description": "AI mentor for mentees that guides development through teaching, questioning, and feedback - with session logging, weakness tracking, and weekly reports for managers",
+  "author": {
+    "name": "nozawa"
+  }
+}
