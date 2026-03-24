@@ -105,6 +105,63 @@ Reports are saved to `.mentor-logs/reports/` in a format ready for manager revie
 
 ## Architecture
 
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                        /dev-mentor                              │
+│                   Main Mentoring Workflow                        │
+│                                                                 │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐       │
+│  │ Phase 1  │→ │ Phase 2  │→ │ Phase 3  │→ │ Phase 4  │→ ...  │
+│  │Understand│  │ Explore  │  │ Design   │  │Implement │       │
+│  └──────────┘  └────┬─────┘  └──────────┘  └──────────┘       │
+│                     │                                           │
+│         ┌───────────┴───────────┐                               │
+│         ▼                       ▼                               │
+│  ┌──────────────┐  ┌───────────────────┐                       │
+│  │codebase-guide│  │understanding-     │  ← Specialized        │
+│  │   (agent)    │  │checker (agent)    │    Agents              │
+│  └──────────────┘  └───────────────────┘                       │
+│                                                                 │
+│  ... → ┌──────────┐  ┌──────────┐  ┌──────────┐               │
+│        │ Phase 5  │→ │ Phase 6  │→ │ Phase 7  │               │
+│        │ Review   │  │  Test    │  │ Reflect  │               │
+│        └────┬─────┘  └──────────┘  └───┬──────┘               │
+│             │                          │                        │
+│             ▼                          ▼                        │
+│      ┌─────────────┐          ┌──────────────┐                 │
+│      │code-feedback│          │mentor-evolve │ ← Meta-learning │
+│      │  (agent)    │          │  (agent)     │                 │
+│      └─────────────┘          └──────┬───────┘                 │
+│                                      │                          │
+└──────────────────────────────────────┼──────────────────────────┘
+                                       │
+                    ┌──────────────────┐│┌──────────────────────┐
+                    │  .mentor-logs/   │▼│                      │
+                    │                  │ │  mentor-profile.md   │
+                    │  sessions/*.md ──┼─│  (evolves over time) │
+                    │  weaknesses.md   │ │                      │
+                    │  growth-summary  │ │  ┌────────────────┐  │
+                    │  reports/*.md    │ │  │ Topic Mastery   │  │
+                    │                  │ │  │ Learning Style  │  │
+                    └──────────────────┘ │  │ Strategy Memory │  │
+                                         │  │ Phase Customs   │  │
+                           ▲             │  └────────────────┘  │
+                           │             └──────────────────────┘
+                           │                        │
+                    ┌──────┴───────┐                │
+                    │/mentor-review│    Loaded at ◄──┘
+                    │/mentor-weekly│    session start
+                    │   -report   │
+                    └──────────────┘
+
+  ┌─────────────────────────────────────────────────────────────┐
+  │  Auto-triggered Skills (no slash command needed)            │
+  │                                                             │
+  │  "review my code" → dev-mentor-review                      │
+  │  "why / なぜ"     → dev-mentor-explain                     │
+  └─────────────────────────────────────────────────────────────┘
+```
+
 ### Agents
 
 | Agent | Role |
@@ -113,6 +170,19 @@ Reports are saved to `.mentor-logs/reports/` in a format ready for manager revie
 | `understanding-checker` | Evaluates mentee answers with 0-100 scoring and misconception detection |
 | `code-feedback` | Educational code review — issues framed as questions with category tags |
 | `growth-analyzer` | Cross-session analysis of weakness patterns and growth trends |
+| `mentor-evolve` | Meta-learning — analyzes what teaching strategies work and evolves the mentor profile |
+
+### Adaptive Mentoring
+
+The mentor **gets better the more you use it**. After each session, the `mentor-evolve` agent analyzes accumulated data to build a mentor profile (`.mentor-logs/mentor-profile.md`) that tracks:
+
+- Mentee's learning style and skill level
+- Topic mastery map with per-topic scaffolding recommendations
+- Which teaching strategies work vs. which to avoid
+- Per-phase customizations (e.g., "start hints at level 2 for error handling")
+- Predicted next challenges based on growth trajectory
+
+The profile is loaded at the start of every session, so the mentor adapts its approach automatically.
 
 ### Auto-Triggered Skills
 
